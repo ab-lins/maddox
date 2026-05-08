@@ -27,8 +27,8 @@ public class GameService {
         headers.set("Accept", "application/json");
 
         // Simple query for now
-        String query = "fields name, summary; search \"" + gameName + "\"; limit 5;";
-
+        String query = "fields id, name, summary, cover.url, total_rating; search \"" + gameName + "\"; where parent_game = null; limit 10;";
+        
         HttpEntity<String> request = new HttpEntity<>(query, headers);
         RestTemplate restTemplate = new RestTemplate();
 
