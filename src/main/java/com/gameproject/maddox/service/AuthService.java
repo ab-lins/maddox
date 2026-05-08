@@ -3,7 +3,8 @@ package com.gameproject.maddox.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.util.Map;
+
+import com.gameproject.maddox.model.TwitchAuthResponse;
 
 @Service
 public class AuthService {
@@ -24,7 +25,6 @@ public class AuthService {
     }
 
     private void fetchToken() {
-        // Log starting the process
         System.out.println("Fetching new access token from Twitch...");
 
         String url = "https://id.twitch.tv/oauth2/token?client_id=" + clientId + 
@@ -33,10 +33,13 @@ public class AuthService {
         
         try {
             RestTemplate restTemplate = new RestTemplate();
-            Map<String, Object> response = restTemplate.postForObject(url, null, Map.class);
             
-            this.accessToken = (String) response.get("access_token");
-            System.out.println("Token generated successfully: " + this.accessToken);
+            TwitchAuthResponse response = restTemplate.postForObject(url, null, TwitchAuthResponse.class);
+            
+            if (response != null) {
+                this.accessToken = response.getAccessToken();
+                System.out.println("Token generated successfully: " + this.accessToken);
+            }
         } catch (Exception e) {
             System.err.println("Error fetching token: " + e.getMessage());
         }
